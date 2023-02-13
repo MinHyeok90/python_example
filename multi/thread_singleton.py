@@ -13,9 +13,9 @@ class ThreadSafeSingleton(object):
             with cls._lock:
                 if not cls._instance:
                     cls._instance = super().__new__(cls)
-                    cls.a = ""
-                    cls.b = ""
-                    cls.c = ""
+                    cls.a = "a"
+                    cls.b = "b"
+                    cls.c = "c"
         return cls._instance
 
     def getA(self):
@@ -39,6 +39,20 @@ class ThreadSafeSingleton(object):
     def __str__(self):
         return f"{self.a} {self.b} {self.c}"
 
+
+# 이런 싱글톤 객체는 상속이 안된다. init이 호출되지 않기 때문.
+# Child는 ThreadSafeSingleton일 뿐이며, 이 클래스 내에 추가된 함수는 초기화가 되지 않는다.
+class Child(ThreadSafeSingleton):
+    def __init__(self):
+        self.a = "Child"
+        print("Child")
+    
+    def printa(self):
+        print(self.a)
+        
+
+c:Child = Child()
+c.printa() # 이 함수는 존재하지 않는다. Child는 ThreadSafeSingleton일 뿐이다.
 
 def workb():
     val:ThreadSafeSingleton = ThreadSafeSingleton()
